@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>voicegen Feat.初音ミク</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        :root {
+            --miku-on: #e12885;
+            --miku-dark: #137a7f;
+            --miku-std: #39c5bb;
+            --miku-brighst: #86cecb;
+            --miku-text: #373b3e;
+        }
+
+        body {
+            margin: 0 5px;
+            padding: 0;
+        }
+
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        textarea {
+            overflow: scroll;
+            width: calc(100% - 10px);
+            height: 150px;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+        }
+
+        .listTemplate {
+            white-space: pre-line;
+        }
+
+        .listTemplate p,
+        .listTemplate h4 {
+            margin: 0;
+        }
+
+        .hide {
+            display: none !important;
+        }
+
+        .trim {
+            background-size: cover !important;
+        }
+
+        .music-box-wrap {
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            position: absolute;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .music-box {
+            background: linear-gradient(to bottom, var(--miku-text) 0%, #666 100%);
+            padding: 80px 30px 0;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .music-card-hz {
+            /* display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; */
+            background: #000;
+            border-radius: 10px;
+            margin: 0 auto 5px;
+            background-position: center;
+            background-repeat: no-repeat;
+            -webkit-box-reflect: below 2px -webkit-linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.2));
+        }
+
+        .card-chara-empty {
+            background-color: #999 !important;
+            width: 400px;
+            height: 251px;
+        }
+
+
+        .music {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 30px;
+            width: 200px;
+            text-align: center;
+            font-size: 14px;
+            margin: 20px auto 30px;
+            border-radius: 20px;
+            /* background: #333; */
+            background-color: var(--miku-on);
+            color: #fff;
+            border: 0;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .music.pause {
+            background-color: #333;
+        }
+        .material-symbols-sharp {
+            font-variation-settings:
+                'FILL' 0,
+                'wght' 400,
+                'GRAD' 0,
+                'opsz' 48
+        }
+
+        .wavecont {
+            position: absolute;
+            top: 140px;
+            width: 400px;
+        }
+
+        #waveform,
+        #timeline {
+            width: 100%;
+        }
+
+        .close {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            background-color: #333;
+            padding: 10px 15px;
+            color: #fff;
+            border-radius: 50%;
+        }
+    </style>
+    <script type="importmap">
+        {
+          "imports": {
+            "wavesurfer.js": "https://cdn.jsdelivr.net/npm/wavesurfer.js@6.6.3/+esm",
+            "wavesurfer/plugin/": "https://cdn.jsdelivr.net/npm/wavesurfer.js@6.6.3/dist/plugin/"
+          }
+        }
+    </script>
+    <script src="./index.mjs" type="module"></script>
+</head>
+
+<body>
+    <form action="javascript:void" method="post">
+        <textarea name="audiolist" id="audiolist" cols="30" rows="60" placeholder='自動生成されたリストです。「,」で区切ります。'
+            required></textarea>
+        <select id="voiceSelect">
+            <option value="">音声ファイルの選択</option>
+        </select>
+        <audio id="audioPreview">
+            お使いのブラウザはオーディオをサポートしていません。
+        </audio>
+
+        <input type="button" value="Preview" id="previewButton">
+        <input type="button" value="ADD to list" id="addButton">
+        <br>
+        <input type="number" name="sec" id="sec" min="1" max="60" placeholder="60sec = 1min" style="width: 135px;">
+        <input type="button" value="addSilent" id="addSilent">
+        <br>
+        <input type="button" value="Preview list" id="listPreviewButton">
+        <br>
+        <input type="submit" value="submit">
+    </form>
+
+    <div class="listTemplate">
+        <h4>list Template</h4>
+        <hr>
+        <p>./voice/KSK2_0656.mp3,
+            ./voice/KSK2_0658.mp3,
+            ./voice/KSK2_0660.mp3,
+            ./voice/KSK2_0662.mp3,
+            ./voice/KSK2_0672.mp3,
+            ./voice/KSK2_0673.mp3,
+            ./voice/KSK2_0670.mp3,
+            ./voice/KSK2_0687.mp3,
+            Sil_1,
+            ./voice/KSK2_0160.mp3
+        </p>
+    </div>
+
+
+    <div class="music-box-wrap hide">
+        <div class="music-box">
+            <div class="music-card-hz trim card-chara-empty" style="background-image:url(./card-miku.png);"></div>
+            <div class="wavecont">
+                <div id="waveform"></div>
+                <div id="timeline"></div>
+            </div>
+            <button class="music play" data-card="music-card-hz">
+                <span class="material-symbols-sharp">
+                    pause
+                </span>
+                <span id="t">pause</span>
+            </button>
+            <button class="music resume hide" data-card="music-card-hz">
+                <span class="material-symbols-sharp">
+                    resume
+                </span>
+                <span id="t">resume</span>
+            </button>
+            <button class="close" onclick="((e)=>{
+                e.parentElement.parentElement.classList.toggle('hide');
+            })(this)">X</button>
+        </div>
+        <div class="lyric-box"></div>
+    </div>
+
+    <footer>
+        <ul>
+            <li>Art by KEI / iXima</li>
+            <li>初音ミク (Hatsune Miku)はクリプトン・フューチャー・メディア株式会社の著作物です。
+                © Crypton Future Media, INC. PIAPRO</li>
+        </ul>
+    </footer>
+</body>
+
+</html>

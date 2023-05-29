@@ -1,0 +1,9 @@
+./voice/KSK2_0656.mp3,
+./voice/KSK2_0658.mp3,
+./voice/KSK2_0660.mp3,
+./voice/KSK2_0662.mp3,
+./voice/KSK2_0672.mp3,
+./voice/KSK2_0673.mp3,
+./voice/KSK2_0670.mp3,
+./voice/KSK2_0687.mp3,
+./voice/KSK2_0159.mp3, // 0160

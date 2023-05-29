@@ -1,10 +1,10 @@
 import WaveSurfer from "wavesurfer.js";
-import crunker from 'https://cdn.jsdelivr.net/npm/crunker@2.1.0/+esm';
-import { createSilentAudio } from 'https://cdn.jsdelivr.net/npm/create-silent-audio@0.1.2/+esm';
-
+import crunker from 'crunker';
+import { createSilentAudio } from 'createSilentAudio';
 import { formSubmitAsync } from './formSubmitAsync.js';
 import { formParse } from './formParse.js';
-import 'wavesurfer/plugin/wavesurfer.timeline.min.js'
+import 'wavesurfer/plugin/wavesurfer.timeline.min.js';
+
 await new Promise(r => { window.onload = () => r(true) });
 const voiceSelect = document.getElementById("voiceSelect");
 const audioPreview = document.getElementById("audioPreview");
@@ -166,4 +166,3 @@ siteOnload();
 
 //     Array.from(document.querySelectorAll('input[type=button]')).forEach((elem) => (elem.disabled = true));
 // });
-
